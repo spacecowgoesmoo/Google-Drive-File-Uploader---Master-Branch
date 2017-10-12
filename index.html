@@ -1,0 +1,117 @@
+<head>
+<script>
+ // If there's any error message in the browser console during pageload, hide everything else on the page and display the first error
+ // The 'Line' part doesn't work because of the extra code junk Google does when delivering the page
+ // This isn't 100% reliable because of Google, but it covers some things
+    window.onerror=function(msg, url, linenumber){
+    document.getElementById('myForm').style.display = 'none';
+    document.getElementById('output').innerHTML = "Error - " + msg;
+    document.getElementById('output2').innerHTML = "Line Number " + linenumber;
+    document.getElementById('output3').innerHTML = "Please copy this error message and email it to xxxx@gmail.com.";
+    }
+</script>
+</head>
+
+
+
+
+
+
+
+
+<body onLoad="timer()">
+
+<img src="header300x300.png" width="60" height="60" class="header"></img>
+<div class="header bigFont">File Uploader Master Branch</div>
+<hr>
+
+<form id="myForm" class="padded" onkeypress="return event.keyCode != 13;">
+    <input type="text" name="myName" id="textField" width="100" placeholder="Full Name (required)">
+    <input type="file" name="myFile" id="uploadButton">
+    <input type="submit" id="submitButton" value="Upload File" class="invisible"
+          onclick="this.value='Uploading..';
+                    this.disabled=true;
+                    setTimeout('timeoutWarning()', 120000)
+                    google.script.run.withFailureHandler(uploadFailed)
+                    google.script.run.withSuccessHandler(uploadSucceeded)
+                    .uploadFiles(this.parentNode);
+                    return false;">
+    Note - If your file is over 10MB, please upload it to Google Drive and share it to xxxx@gmail.com instead of using this page.
+</form>
+
+<div id="output" class="padded"></div>
+<div id="output2" class="padded"></div><br><br><br>
+<div id="output3" class="padded"></div>
+
+
+
+
+
+
+
+
+<script>
+var uploadComplete = false;
+
+    function uploadSucceeded(status) {
+        uploadComplete = true;
+        document.getElementById('myForm').style.display = 'none';
+        document.getElementById('output').innerHTML = "Your file has been uploaded!";
+        document.getElementById('output2').innerHTML = "If you would like to upload a new file or a newer version of an existing file, please refresh the page.";
+        document.getElementById('output3').innerHTML = "If you have any questions about the uploader, please contact xxxx@gmail.com.";
+    }
+    
+    function uploadFailed(status) {
+        document.getElementById('myForm').style.display = 'none';
+        document.getElementById('output').innerHTML = "Error - uploadFiles() did not complete successfully.";
+        document.getElementById('output3').innerHTML = "Please copy this error message and email it to xxxx@gmail.com.";
+    }
+    
+    function timeoutWarning() {
+    if (uploadComplete == false) {
+        document.getElementById('myForm').style.display = 'none';
+        document.getElementById('output').innerHTML = "Your file is taking too long to upload; something may have gone wrong.";
+        document.getElementById('output2').innerHTML = "Please refresh the page and try again.";
+        document.getElementById('output3').innerHTML = "If you are having repeated issues with the uploader, please contact xxxx@gmail.com.";
+        }
+    }
+    
+    function timer() {
+        if (document.getElementById("uploadButton").value == "" || document.getElementById("textField").value == "") {
+            document.getElementById('submitButton').className = 'invisible'; } else {
+            document.getElementById('submitButton').className = 'visible'; }
+     	setTimeout('timer()', 300)
+    }
+</script>
+
+
+
+
+
+
+
+
+<style>
+    .padded { display: block; margin: 20px; }
+	.bigFont { font-size: 1.4em; font-weight: bold; }
+
+    .invisible { display: none; }
+    .visible { display: block; }
+	
+    input { display:block; margin: 20px; margin-left: 0px; }
+    input[type="text"] { width: 200px; }
+
+    .header { display: inline; margin: 20px 0 0 20px; }	
+	body {
+		width: 90%;
+		max-width: 1000px;
+	    padding-bottom: 40px;
+	    margin: 0 auto;
+	    }
+		
+	@media screen and (max-width: 630px) {
+		.header { display: block; margin: 10px auto; text-align: center;}
+	}
+</style>
+
+</body>
